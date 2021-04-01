@@ -1,14 +1,18 @@
 package core
 
 import (
-	"github.com/robfig/cron/v3"
+	"time"
+
 	"github.com/secure-dns/service/plugin"
 )
 
 //startCron - starts the cron listener
 func startCron() {
-	c := cron.New()
-	c.AddFunc("*/2 * * * * *", runCron)
+	for true {
+		time.Sleep(time.Second * 10)
+
+		runCron()
+	}
 }
 
 //runCron - execute all jobs
