@@ -1,6 +1,6 @@
 package core
 
-func Run() {
+func Run(addr string) {
 	go startCron()
-	runDoH(":8080")
+	runDoH(addr)
 }

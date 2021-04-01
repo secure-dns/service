@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	core.Run()
+	core.Run(":8080")
 }
