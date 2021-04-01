@@ -3,8 +3,8 @@ package blocklists
 import (
 	"bufio"
 	"bytes"
+	"net"
 	"net/http"
-	"sort"
 
 	cplugin "github.com/coredns/coredns/plugin"
 	"github.com/miekg/dns"
@@ -29,12 +29,31 @@ func exec(req *dns.Msg, hosts []string) ([]dns.RR, uint8) {
 		return []dns.RR{}, plugin.Next
 	}
 
-	return []dns.RR{}, plugin.Stop
+	switch req.Question[0].Qtype {
+	case dns.TypeA:
+		r := new(dns.A)
+		r.Hdr = dns.RR_Header{Name: host, Rrtype: dns.TypeA, Class: dns.ClassINET, Ttl: 600}
+		r.A = net.ParseIP("0.0.0.0").To4()
+		return []dns.RR{r}, plugin.Stop
+	case dns.TypeAAAA:
+		r := new(dns.AAAA)
+		r.Hdr = dns.RR_Header{Name: host, Rrtype: dns.TypeAAAA, Class: dns.ClassINET, Ttl: 600}
+		r.AAAA = net.ParseIP("0000:0000:0000:0000:0000:0000:0000:0000").To16()
+		return []dns.RR{r}, plugin.Stop
+	default:
+		return []dns.RR{}, plugin.Stop
+	}
 }
 
 func isOnList(hosts []string, host string) bool {
-	if i := sort.SearchStrings(hosts, host); i < len(hosts) && hosts[i] == host {
+	/*if i := sort.SearchStrings(hosts, host); i < len(hosts) && hosts[i] == host {
 		return true
+	}
+	return false*/
+	for _, h := range hosts {
+		if h == host {
+			return true
+		}
 	}
 	return false
 }
