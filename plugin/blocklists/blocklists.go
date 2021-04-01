@@ -3,7 +3,6 @@ package blocklists
 import (
 	"bufio"
 	"bytes"
-	"net"
 	"net/http"
 	"sort"
 
@@ -15,7 +14,7 @@ import (
 func GetPlugin(path string) plugin.Plugin {
 	hosts := readData(path)
 	return plugin.Plugin{
-		Exec: func(req *dns.Msg) []dns.RR {
+		Exec: func(req *dns.Msg) ([]dns.RR, uint8) {
 			return exec(req, hosts)
 		},
 		Cron: func() {
@@ -24,17 +23,13 @@ func GetPlugin(path string) plugin.Plugin {
 	}
 }
 
-func exec(req *dns.Msg, hosts []string) []dns.RR {
+func exec(req *dns.Msg, hosts []string) ([]dns.RR, uint8) {
 	host := req.Question[0].Name
 	if !isOnList(hosts, host) {
-		return []dns.RR{}
+		return []dns.RR{}, plugin.Next
 	}
 
-	r := new(dns.A)
-	r.Hdr = dns.RR_Header{Name: host, Rrtype: dns.TypeA, Class: dns.ClassINET, Ttl: 600}
-	r.A = net.ParseIP("0.0.0.0").To4()
-
-	return []dns.RR{r}
+	return []dns.RR{}, plugin.Stop
 }
 
 func isOnList(hosts []string, host string) bool {

@@ -11,7 +11,7 @@ func GetPlugin(path string, action uint8) plugin.Plugin {
 	hosts, _ := parse(path, action)
 
 	return plugin.Plugin{
-		Exec: func(req *dns.Msg) []dns.RR {
+		Exec: func(req *dns.Msg) ([]dns.RR, uint8) {
 			qName := req.Question[0].Name
 			qType := req.Question[0].Qclass
 
@@ -21,7 +21,7 @@ func GetPlugin(path string, action uint8) plugin.Plugin {
 			case dns.TypePTR:
 				names := LookupStaticAddr(*hosts, qName)
 				if len(names) == 0 {
-					return answers
+					return answers, plugin.Next
 				}
 				answers = ptr(qName, ttl, names)
 			case dns.TypeA:
@@ -33,7 +33,7 @@ func GetPlugin(path string, action uint8) plugin.Plugin {
 			default:
 				answers = []dns.RR{}
 			}
-			return answers
+			return answers, plugin.Stop
 		},
 		Cron: func() {
 			hosts, _ = parse(path, action)

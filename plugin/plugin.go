@@ -9,7 +9,7 @@ import (
 //Plugin - default plugin type
 type Plugin struct {
 	//Exec is the only required function of a plugin. It handels a user request.
-	Exec func(req *dns.Msg) []dns.RR
+	Exec func(req *dns.Msg) ([]dns.RR, uint8)
 	//Cron can be used to update the plugin data
 	Cron func()
 }
@@ -19,6 +19,11 @@ type PluginList map[string]Plugin
 
 //Plugins - list of all available plugins
 var Plugins = PluginList{}
+
+const (
+	Next uint8 = 0
+	Stop uint8 = 1
+)
 
 //Register is a function to register new plugins.
 func Register(name string, plugin Plugin) {

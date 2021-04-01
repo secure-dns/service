@@ -22,13 +22,16 @@ func HandlePlugins(req *dns.Msg, plugins []string) *dns.Msg {
 	//run plugins
 
 	for _, pluginName := range plugins {
-		plugin := plugin.Plugins[pluginName]
-		if plugin.Exec == nil {
+		currentPlugin := plugin.Plugins[pluginName]
+		if currentPlugin.Exec == nil {
 			continue
 		}
-		res := plugin.Exec(req)
+		res, code := currentPlugin.Exec(req)
 		if len(res) != 0 {
 			answers = append(answers, res...)
+			break
+		}
+		if code == plugin.Stop {
 			break
 		}
 	}
