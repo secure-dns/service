@@ -18,10 +18,20 @@ func HandlePlugins(req *dns.Msg, plugins []string) *dns.Msg {
 	msg.SetReply(req)
 	msg.Authoritative = true
 
-	answers := []dns.RR{}
 	//run plugins
+	answers := RunPluginChain(plugins, req)
 
-	for _, pluginName := range plugins {
+	//bind results to msg
+	msg.Answer = answers
+
+	return msg
+}
+
+//RunPluginChain - runs a list of plugins
+func RunPluginChain(pluginList []string, req *dns.Msg) []dns.RR {
+	answers := []dns.RR{}
+
+	for _, pluginName := range pluginList {
 		currentPlugin := plugin.Plugins[pluginName]
 		if currentPlugin.Exec == nil {
 			continue
@@ -35,9 +45,5 @@ func HandlePlugins(req *dns.Msg, plugins []string) *dns.Msg {
 			break
 		}
 	}
-
-	//bind results to msg
-	msg.Answer = answers
-
-	return msg
+	return answers
 }

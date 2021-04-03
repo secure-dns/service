@@ -3,6 +3,8 @@ package blocklists
 import (
 	"bufio"
 	"bytes"
+	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
 
@@ -11,14 +13,21 @@ import (
 	"github.com/secure-dns/service/plugin"
 )
 
-func GetPlugin(path string) plugin.Plugin {
-	hosts := readData(path)
+const (
+	//TypeWeb - path is a url string
+	TypeWeb uint8 = 0
+	//TypeFile - path is a local file path
+	TypeFile uint8 = 1
+)
+
+func GetPlugin(path string, action uint8) plugin.Plugin {
+	hosts := readData(path, action)
 	return plugin.Plugin{
 		Exec: func(req *dns.Msg) ([]dns.RR, uint8) {
 			return exec(req, hosts)
 		},
 		Cron: func() {
-			hosts = readData(path)
+			hosts = readData(path, action)
 		},
 	}
 }
@@ -58,14 +67,24 @@ func isOnList(hosts []string, host string) bool {
 	return false
 }
 
-func readData(path string) []string {
-	//data, err := ioutil.ReadFile(path)
-	resp, err := http.Get(path)
-	if err != nil {
-		return []string{}
+func readData(path string, action uint8) []string {
+	var r io.Reader
+	switch action {
+	case TypeFile:
+		b, err := ioutil.ReadFile(path)
+		if err != nil {
+			return []string{}
+		}
+		r = bytes.NewReader(b)
+	default:
+		resp, err := http.Get(path)
+		if err != nil {
+			return []string{}
+		}
+		defer resp.Body.Close()
+		r = resp.Body
 	}
-	defer resp.Body.Close()
-	scanner := bufio.NewScanner(resp.Body)
+	scanner := bufio.NewScanner(r)
 	data := []string{}
 	for scanner.Scan() {
 		line := scanner.Bytes()
