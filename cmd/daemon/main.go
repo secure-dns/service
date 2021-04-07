@@ -3,8 +3,10 @@ package main
 import (
 	"github.com/secure-dns/service/core"
 	_ "github.com/secure-dns/service/core-plugins"
+	"github.com/secure-dns/service/env"
 )
 
 func main() {
-	core.Run(":8080")
+	env.Load()
+	core.Run()
 }

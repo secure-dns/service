@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"sort"
-
 	"github.com/miekg/dns"
 	"github.com/secure-dns/service/plugin"
 )
@@ -10,9 +8,9 @@ import (
 //HandlePlugins is called on each request and fills the gap between the client and your plugins.
 func HandlePlugins(req *dns.Msg, plugins []string) *dns.Msg {
 
-	if i := sort.SearchStrings(plugins, "fwd"); i >= len(plugins) || plugins[i] != "fwd" {
+	/*if i := sort.SearchStrings(plugins, "fwd"); i >= len(plugins) || plugins[i] != "fwd" {
 		plugins = append(plugins, "fwd")
-	}
+	}*/
 
 	msg := new(dns.Msg)
 	msg.SetReply(req)

@@ -14,7 +14,7 @@ import (
 
 //runDoH starts the http server
 func runDoH(addr string) {
-	fmt.Printf("Server listening on: %s\n", addr)
+	fmt.Printf("DoH Server listening on: %s\n", addr)
 	http.HandleFunc("/dns-query/", dohHandler)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
