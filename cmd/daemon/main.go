@@ -8,5 +8,5 @@ import (
 
 func main() {
 	env.Load()
-	core.Run()
+	core.Run(core.CoreConfig{DoH: true, DoT: true})
 }
