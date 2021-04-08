@@ -29,7 +29,7 @@ func dohHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plugins := strings.Split(strings.TrimPrefix(u.Path, "/dns-query/"), ":")
+	plugins := strings.Split(strings.TrimPrefix(u.Path, "/"), ":")
 
 	resp := handler.HandlePlugins(msg, plugins)
 
