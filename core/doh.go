@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -15,8 +16,8 @@ import (
 //runDoH starts the http server
 func runDoH(addr string) {
 	fmt.Printf("DoH Server listening on: %s\n", addr)
-	http.HandleFunc("/dns-query/", dohHandler)
-	log.Fatal(http.ListenAndServe(addr, nil))
+	http.HandleFunc("/", dohHandler)
+	log.Fatal(http.ListenAndServeTLS(addr, os.Getenv("TLS_CERT_CHAIN"), os.Getenv("TLS_CERT_KEY"), nil))
 }
 
 //dohHandler handels http requests

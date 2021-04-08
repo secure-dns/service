@@ -9,7 +9,7 @@ import (
 //startCron - starts the cron listener
 func startCron() {
 	for true {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Hour * 24)
 
 		runCron()
 	}
