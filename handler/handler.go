@@ -29,6 +29,13 @@ func HandlePlugins(req *dns.Msg, plugins []string) *dns.Msg {
 func RunPluginChain(pluginList []string, req *dns.Msg) []dns.RR {
 	answers := []dns.RR{}
 
+	if plugin.Plugins["ping"].Exec != nil {
+		resp, next := plugin.Plugins["ping"].Exec(req)
+		if next == plugin.Stop {
+			return resp
+		}
+	}
+
 	for _, pluginName := range pluginList {
 		currentPlugin := plugin.Plugins[pluginName]
 		if currentPlugin.Exec == nil {

@@ -3,6 +3,8 @@ package core
 import (
 	"os"
 	"os/signal"
+
+	_ "github.com/secure-dns/service/plugin/ping"
 )
 
 //CoreConfig - server configuration
