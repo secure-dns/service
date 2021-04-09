@@ -19,7 +19,7 @@ func exec(req *dns.Msg) ([]dns.RR, uint8) {
 	host := req.Question[0].Name
 	qType := req.Question[0].Qtype
 
-	if host != "ping.visitme.cyou." {
+	if host != "ping.alxs.xyz." {
 		return []dns.RR{}, plugin.Next
 	}
 	if qType == dns.TypeAAAA {
