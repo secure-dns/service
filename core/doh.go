@@ -14,10 +14,14 @@ import (
 )
 
 //runDoH starts the http server
-func runDoH(addr string) {
+func runDoH(addr string, secure bool) {
 	fmt.Printf("DoH Server listening on: %s\n", addr)
 	http.HandleFunc("/", dohHandler)
-	log.Fatal(http.ListenAndServeTLS(addr, os.Getenv("TLS_CERT_CHAIN"), os.Getenv("TLS_CERT_KEY"), nil))
+	if secure {
+		log.Fatal(http.ListenAndServeTLS(addr, os.Getenv("TLS_CERT_CHAIN"), os.Getenv("TLS_CERT_KEY"), nil))
+		return
+	}
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
 //dohHandler handels http requests
