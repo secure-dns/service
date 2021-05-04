@@ -1,7 +1,6 @@
 package forward
 
 import (
-	"crypto/tls"
 	"net"
 
 	"github.com/miekg/dns"
@@ -18,10 +17,7 @@ var Forward = plugin.Plugin{
 
 func exec(req *dns.Msg) ([]dns.RR, uint8) {
 	c := new(dns.Client)
-	c.Net = "tcp-tls"
-	c.TLSConfig = new(tls.Config)
-	c.TLSConfig.ServerName = "cloudflare-dns.com"
-	res, _, err := c.Exchange(req, net.JoinHostPort("1.1.1.1", "853"))
+	res, _, err := c.Exchange(req, net.JoinHostPort("1.1.1.1", "53"))
 	if err != nil {
 		return []dns.RR{}, plugin.Next
 	}
