@@ -10,8 +10,6 @@ import (
 type Plugin struct {
 	//Exec is the only required function of a plugin. It handels a user request.
 	Exec func(req *dns.Msg) ([]dns.RR, uint8)
-	//Cron can be used to update the plugin data
-	Cron func()
 }
 
 //PluginList - list of all existing plugins

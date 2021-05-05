@@ -14,7 +14,6 @@ type CoreConfig struct {
 
 //Run - runs the daemon
 func Run(cfg CoreConfig) {
-	go startCron()
 	if cfg.DoH {
 		go runDoH(os.Getenv("DOH_ADDR"), cfg.Secure)
 	}
