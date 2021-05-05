@@ -16,7 +16,7 @@ import (
 //runDoH starts the http server
 func runDoH(addr string, secure bool) {
 	fmt.Printf("DoH Server listening on: %s\n", addr)
-	http.HandleFunc("/", dohHandler)
+	http.HandleFunc("/", DohHandler)
 	if secure {
 		log.Fatal(http.ListenAndServeTLS(addr, os.Getenv("TLS_CERT_CHAIN"), os.Getenv("TLS_CERT_KEY"), nil))
 		return
@@ -25,7 +25,7 @@ func runDoH(addr string, secure bool) {
 }
 
 //dohHandler handels http requests
-func dohHandler(w http.ResponseWriter, r *http.Request) {
+func DohHandler(w http.ResponseWriter, r *http.Request) {
 	u, _ := r.URL.Parse(r.RequestURI)
 	msg, err := doh.RequestToMsg(r)
 	if err != nil {
