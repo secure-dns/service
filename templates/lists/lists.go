@@ -51,7 +51,11 @@ func (p plgn) exec(req *dns.Msg) ([]dns.RR, uint8) {
 }
 
 func (p plgn) check(host string) bool {
-	dat, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.txt", p.listPath, host[0:2]))
+	filename := host[0:2]
+	if len(strings.Split(host, ".")[0]) == 1 {
+		filename = "_" + host[0:1]
+	}
+	dat, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.txt", p.listPath, filename))
 	if err != nil {
 		return false
 	}
